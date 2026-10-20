@@ -1,0 +1,39 @@
+version: '2'
+
+services:
+
+  api:
+    image: movie-api
+    ports:
+      - 8080
+    networks:
+      - backend
+
+  redis:
+    image: redis
+    links:
+      - api
+    networks:
+      - backend
+
+  mongo:
+    image: mongo
+    links:
+      - api
+    networks:
+      - backend
+
+  lb:
+    image: dockercloud/haproxy
+    ports:
+      - 1999:80
+    links:
+      - api
+    networks:
+      - backend
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  backend:
+    driver: bridge
